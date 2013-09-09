@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -227,22 +228,26 @@ public class LoginActivity extends Activity {
         }
 
         public void postData() {
-            String url = "https://www.trainingpeaks.com/tpwebservices/authentication/login.aspx";
+            String url = "http://www.trainingpeaks.com/TPWebServices/GetWorkoutsForAthlete";
             // Create a new HttpClient and Post Header
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(url);
 
             try {
                 // Add your data
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
                 nameValuePairs.add(new BasicNameValuePair("username", mUser));
                 nameValuePairs.add(new BasicNameValuePair("password", mPassword));
+                nameValuePairs.add(new BasicNameValuePair("startDate", "09/08/2013"));
+                nameValuePairs.add(new BasicNameValuePair("endDate", "09/08/2013"));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 // Execute HTTP Post Request
                 HttpResponse response = httpclient.execute(httppost);
                 Log.d("LOGIN", EntityUtils.toString(response.getEntity()));
-
+                Intent intent = new Intent(LoginActivity.this, WorkoutActivity.class);
+                intent.putExtra("response", EntityUtils.toString(response.getEntity()));
+                startActivity(intent);
             } catch (ClientProtocolException e) {
                 // TODO Auto-generated catch block
             } catch (IOException e) {
